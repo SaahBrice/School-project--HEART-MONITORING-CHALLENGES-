@@ -83,6 +83,17 @@ if __name__ == '__main__':
             
             plot_series(nni_times, nn_intervals, 'NNI [s]')        
             plot_series(sd_times, subsequent_differences, 'SD [s]')
+
+            plt.plot(nni_times, nn_intervals, label='NNI')
+            threshold = 0.2  # Example threshold, adjust as needed
+            seizure_indices = np.where(nn_intervals < threshold)[0]
+            for index in seizure_indices:
+                plt.axvline(x=nni_times[index], color='red', linestyle='--')  # Vertical line at seizure event
+            plt.xlabel('Time [s]')
+            plt.ylabel('NNI [s]')
+            plt.title('NN Intervals with Seizure Detection')
+            plt.legend()
+            plt.show()
         else:
             print("NNI or SD data files not found.")
         
@@ -142,7 +153,7 @@ if __name__ == '__main__':
     
     if plot_comparison and compute_nni:
         # Identify and filter out noise
-        noise_threshold = 1.5
+        noise_threshold = 0.9
         filtered_indices = [i for i, interval in enumerate(original_nn_intervals) if interval <= noise_threshold]
         
         filtered_nni_times = original_nni_times[filtered_indices]
@@ -155,7 +166,7 @@ if __name__ == '__main__':
         # Calculate statistics for filtered NN intervals
         filtered_mean_nni = np.mean(filtered_nn_intervals)
         filtered_std_nni = np.std(filtered_nn_intervals)
-
+        
 
         plt.figure()
 
@@ -186,7 +197,3 @@ if __name__ == '__main__':
         plt.tight_layout()
         plt.show()
 
-
-
-    
-    plt.show()
